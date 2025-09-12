@@ -1,8 +1,8 @@
-<?php namespace SleepingOwl\Apist\Selectors;
+<?php namespace Glook\Apist\Selectors;
 
-use SleepingOwl\Apist\Apist;
-use SleepingOwl\Apist\DomCrawler\Crawler;
-use SleepingOwl\Apist\Methods\ApistMethod;
+use Glook\Apist\Apist;
+use Glook\Apist\ApistMethod;
+use Glook\Apist\Crawler;
 
 /**
  * Class ApistFilter

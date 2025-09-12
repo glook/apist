@@ -1,7 +1,7 @@
-<?php namespace SleepingOwl\Apist\Yaml;
+<?php namespace Glook\Apist\Yaml;
 
-use SleepingOwl\Apist\Apist;
-use SleepingOwl\Apist\Selectors\ApistSelector;
+use Glook\Apist\Apist;
+use Glook\Apist\Selectors\ApistSelector;
 use Symfony\Component\Yaml\Yaml;
 
 class Parser
@@ -33,9 +33,13 @@ class Parser
 	public function load(Apist $resource)
 	{
 		$data = Yaml::parse($this->file);
-		if (isset($data['baseUrl']))
+		if (isset($data['baseUri']))
 		{
-			$resource->setBaseUrl($data['baseUrl']);
+			$resource->setBaseUri($data['baseUri']);
+			unset($data['baseUri']);
+		} elseif (isset($data['baseUrl']))
+		{
+			$resource->setBaseUri($data['baseUrl']);
 			unset($data['baseUrl']);
 		}
 		foreach ($data as $method => $methodConfig)
@@ -61,8 +65,8 @@ class Parser
 	 * @param $blueprint
 	 * @return array
 	 */
-	protected function parseBlueprint($blueprint)
-	{
+	protected function parseBlueprint($blueprint): array
+    {
 		$callback = function (&$value)
 		{
 			if (is_string($value))

@@ -1,4 +1,4 @@
-<?php namespace SleepingOwl\Apist\DomCrawler;
+<?php namespace Glook\Apist;
 
 use Symfony\Component\DomCrawler\Crawler as SymfonyCrawler;
 

@@ -1,9 +1,11 @@
 <?php
 
-use SleepingOwl\Apist\Apist;
+use Glook\Apist\Apist;
 
 class TestApi extends Apist
 {
+	protected $baseUri = 'http://example.com';
+
 
 	public function index()
 	{
@@ -31,4 +33,10 @@ class TestApi extends Apist
 		return $this->get('/', Apist::filter('.page_head .title'));
 	}
 
-} 
+
+    public function plain_return()
+    {
+        return $this->get('/');
+    }
+
+}

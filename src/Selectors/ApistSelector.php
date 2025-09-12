@@ -1,7 +1,7 @@
-<?php namespace SleepingOwl\Apist\Selectors;
+<?php namespace Glook\Apist\Selectors;
 
+use Glook\Apist\ApistMethod;
 use InvalidArgumentException;
-use SleepingOwl\Apist\Methods\ApistMethod;
 use Symfony\Component\DomCrawler\Crawler;
 
 class ApistSelector
@@ -30,7 +30,7 @@ class ApistSelector
 	 * @param Crawler $rootNode
 	 * @return array|null|string|Crawler
 	 */
-	public function getValue(ApistMethod $method, Crawler $rootNode = null)
+	public function getValue(ApistMethod $method, ?Crawler $rootNode = null)
 	{
 		if (is_null($rootNode))
 		{
