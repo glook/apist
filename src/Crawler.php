@@ -6,33 +6,39 @@ use Symfony\Component\DomCrawler\Crawler as SymfonyCrawler;
 
 class Crawler extends SymfonyCrawler
 {
-    protected $pseudoClasses = [
+    protected array $pseudoClasses = [
         'first',
         'last',
         'eq',
     ];
 
-    public function filter($selector)
+    /**
+     * @param string $selector
+     * @return Crawler
+     */
+    public function filter(string $selector)
     {
-        if ($result = $this->parsePseudoClasses($selector)) {
+        if (($result = $this->parsePseudoClasses($selector)) instanceof Crawler) {
             return $result;
         }
 
         return parent::filter($selector);
     }
 
-    protected function parsePseudoClasses($selector)
+    /**
+     * @param string $selector
+     * @return Crawler|null
+     */
+    protected function parsePseudoClasses(string $selector)
     {
         foreach ($this->pseudoClasses as $pseudoClass) {
             if (preg_match('/^(?<first>.*?):' . $pseudoClass . '(\((?<param>[0-9]+)\))?(?<last>.*)$/', $selector, $attrs)) {
                 $result = $this->filter($attrs['first']);
-                $result = call_user_func([
-                    $result,
-                    $pseudoClass,
-                ], $attrs['param']);
+                $args = isset($attrs['param']) ? [(int) $attrs['param']] : [];
+                $result = call_user_func_array([$result, $pseudoClass], $args);
                 $filter = $attrs['last'];
 
-                if (trim($filter) != '') {
+                if (trim($filter) !== '') {
                     $result = $result->filter($filter);
                 }
 
@@ -43,14 +49,20 @@ class Crawler extends SymfonyCrawler
         return null;
     }
 
-    public function remove()
+    /**
+     * @return void
+     */
+    public function remove(): void
     {
         foreach ($this as $node) {
             $node->parentNode->removeChild($node);
         }
     }
 
-    public function parent()
+    /**
+     * @return self
+     */
+    public function parent(): self
     {
         $ar = $this->parents();
 

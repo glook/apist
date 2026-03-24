@@ -12,12 +12,12 @@ class Parser
     /**
      * @var array
      */
-    protected $methods = [];
+    protected array $methods = [];
 
     /**
      * @var array
      */
-    protected $structures = [];
+    protected array $structures = [];
 
     /**
      * @var string
@@ -25,7 +25,7 @@ class Parser
     protected $file;
 
     /**
-     * @param $file
+     * @param string $file
      */
     public function __construct($file)
     {
@@ -35,7 +35,7 @@ class Parser
     /**
      * @param Apist $resource
      */
-    public function load(Apist $resource)
+    public function load(Apist $resource): void
     {
         $data = Yaml::parse($this->file);
 
@@ -65,17 +65,17 @@ class Parser
     }
 
     /**
-     * @param $blueprint
+     * @param array|string $blueprint
      * @return mixed
      */
     protected function parseBlueprint($blueprint)
     {
-        $callback = function (&$value) {
+        $callback = function (&$value): void {
             if (is_string($value)) {
                 $value = str_replace(':current', '*', $value);
             }
 
-            if ($value[0] === ':') {
+            if (is_string($value) && $value[0] === ':') {
                 // structure
                 $structure = $this->getStructure($value);
                 $value = $this->parseBlueprint($structure);
@@ -83,7 +83,7 @@ class Parser
                 return;
             }
 
-            if (strpos($value, '|') === false) {
+            if (!is_string($value) || strpos($value, '|') === false) {
                 return;
             }
 
@@ -106,7 +106,7 @@ class Parser
 
     /**
      * @param ApistSelector $filter
-     * @param $callback
+     * @param string $callback
      */
     protected function addCallbackToFilter(ApistSelector $filter, $callback)
     {
@@ -130,10 +130,10 @@ class Parser
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @return mixed
      */
-    protected function getStructure($name)
+    protected function getStructure(string $name)
     {
         $structure = '_' . substr($name, 1);
 
@@ -145,10 +145,10 @@ class Parser
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @return array
      */
-    public function getMethod($name)
+    public function getMethod(string $name)
     {
         if (!isset($this->methods[$name])) {
             throw new InvalidArgumentException("Method '$name' not found.'");
@@ -159,20 +159,20 @@ class Parser
     }
 
     /**
-     * @param $method
-     * @param $arguments
-     * @return mixed
+     * @param array $method
+     * @param array $arguments
+     * @return array
      */
     public function insertMethodArguments($method, $arguments)
     {
-        array_walk_recursive($method, function (&$value) use ($arguments) {
+        array_walk_recursive($method, function (&$value) use ($arguments): void {
             if (!is_string($value)) {
                 return;
             }
-            $value = preg_replace_callback('/\$(?<num>[0-9]+)/', function ($finded) use ($arguments) {
+            $value = preg_replace_callback('/\$(?<num>\d+)/', function ($finded) use ($arguments) {
                 $argumentPosition = intval($finded['num']) - 1;
 
-                return $arguments[$argumentPosition] ?? null;
+                return $arguments[$argumentPosition] ?? '';
             }, $value);
         });
 

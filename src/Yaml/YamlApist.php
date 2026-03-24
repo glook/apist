@@ -13,10 +13,10 @@ class YamlApist extends Apist
     protected $parser;
 
     /**
+     * @param string|null $file
      * @param array $options
-     * @param null|mixed $file
      */
-    public function __construct($file = null, $options = [])
+    public function __construct($file = null, array $options = [])
     {
         if (!is_null($file)) {
             $this->loadFromYml($file);
@@ -26,20 +26,20 @@ class YamlApist extends Apist
 
     /**
      * Load method data from yaml file
-     * @param $file
+     * @param string $file
      */
-    protected function loadFromYml($file)
+    protected function loadFromYml(string $file)
     {
         $this->parser = new Parser($file);
         $this->parser->load($this);
     }
 
     /**
-     * @param $name
-     * @param $arguments
-     * @return array
+     * @param string $name
+     * @param array $arguments
+     * @return array|string
      */
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments)
     {
         if (is_null($this->parser)) {
             throw new InvalidArgumentException("Method '$name' not found.'");

@@ -6,31 +6,27 @@ use glook\apist\Apist;
 use glook\apist\ApistMethod;
 use glook\apist\Crawler;
 use InvalidArgumentException;
+use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
 /**
  * Class ApistFilter
- *
- * @method ApistFilter else($blueprint)
  */
 class ApistFilter
 {
     /**
-     * @var Crawler
+     * @var Crawler|bool|string
      */
     protected $node;
 
     /**
      * @var Apist
      */
-    protected $resource;
+    protected Apist $resource;
+
+    protected ApistMethod $method;
 
     /**
-     * @var ApistMethod
-     */
-    protected $method;
-
-    /**
-     * @param mixed $node
+     * @param Crawler|bool|string $node
      * @param ApistMethod $method
      */
     public function __construct($node, ApistMethod $method)
@@ -41,9 +37,9 @@ class ApistFilter
     }
 
     /**
-     * @return ApistFilter
+     * @return string
      */
-    public function text()
+    public function text(): string
     {
         $this->guardCrawler();
 
@@ -51,9 +47,9 @@ class ApistFilter
     }
 
     /**
-     * @return ApistFilter
+     * @return string
      */
-    public function html()
+    public function html(): string
     {
         $this->guardCrawler();
 
@@ -61,10 +57,10 @@ class ApistFilter
     }
 
     /**
-     * @param $selector
-     * @return ApistFilter
+     * @param string $selector
+     * @return Crawler
      */
-    public function filter($selector)
+    public function filter(string $selector): Crawler
     {
         $this->guardCrawler();
 
@@ -72,15 +68,15 @@ class ApistFilter
     }
 
     /**
-     * @param $selector
-     * @return ApistFilter
+     * @param string $selector
+     * @return Crawler
      */
-    public function filterNodes($selector)
+    public function filterNodes(string $selector): Crawler
     {
         $this->guardCrawler();
         $rootNode = $this->method->getCrawler();
         $crawler = new Crawler();
-        $rootNode->filter($selector)->each(function (Crawler $filteredNode) use ($crawler) {
+        $rootNode->filter($selector)->each(function (Crawler $filteredNode) use ($crawler): void {
             $filteredNode = $filteredNode->getNode(0);
             foreach ($this->node as $node) {
                 if ($filteredNode === $node) {
@@ -95,10 +91,10 @@ class ApistFilter
     }
 
     /**
-     * @param $selector
-     * @return ApistFilter
+     * @param string $selector
+     * @return Crawler
      */
-    public function find($selector)
+    public function find(string $selector): Crawler
     {
         $this->guardCrawler();
 
@@ -106,9 +102,9 @@ class ApistFilter
     }
 
     /**
-     * @return ApistFilter
+     * @return Crawler
      */
-    public function children()
+    public function children(): Crawler
     {
         $this->guardCrawler();
 
@@ -116,9 +112,9 @@ class ApistFilter
     }
 
     /**
-     * @return ApistFilter
+     * @return Crawler
      */
-    public function prev()
+    public function prev(): Crawler
     {
         $this->guardCrawler();
 
@@ -126,9 +122,9 @@ class ApistFilter
     }
 
     /**
-     * @return ApistFilter
+     * @return Crawler
      */
-    public function prevAll()
+    public function prevAll(): Crawler
     {
         $this->guardCrawler();
 
@@ -136,18 +132,18 @@ class ApistFilter
     }
 
     /**
-     * @param $selector
-     * @return ApistFilter
+     * @param string $selector
+     * @return Crawler
      */
-    public function prevUntil($selector)
+    public function prevUntil($selector): Crawler
     {
         return $this->nodeUntil($selector, 'prev');
     }
 
     /**
-     * @return ApistFilter
+     * @return Crawler
      */
-    public function next()
+    public function next(): Crawler
     {
         $this->guardCrawler();
 
@@ -155,9 +151,9 @@ class ApistFilter
     }
 
     /**
-     * @return ApistFilter
+     * @return Crawler
      */
-    public function nextAll()
+    public function nextAll(): Crawler
     {
         $this->guardCrawler();
 
@@ -165,20 +161,20 @@ class ApistFilter
     }
 
     /**
-     * @param $selector
-     * @return ApistFilter
+     * @param string $selector
+     * @return Crawler
      */
-    public function nextUntil($selector)
+    public function nextUntil($selector): Crawler
     {
         return $this->nodeUntil($selector, 'next');
     }
 
     /**
-     * @param $selector
-     * @param $direction
+     * @param string $selector
+     * @param string $direction
      * @return Crawler
      */
-    public function nodeUntil($selector, $direction)
+    public function nodeUntil($selector, $direction): Crawler
     {
         $this->guardCrawler();
         $crawler = new Crawler();
@@ -186,7 +182,7 @@ class ApistFilter
         while (1) {
             $node = $filter->$direction();
 
-            if (is_null($node)) {
+            if ($node->count() === 0) {
                 break;
             }
             $filter->node = $node;
@@ -202,9 +198,9 @@ class ApistFilter
 
     /**
      * @param mixed $selector
-     * @return ApistFilter
+     * @return bool
      */
-    public function is($selector)
+    public function is(string $selector): bool
     {
         $this->guardCrawler();
 
@@ -212,10 +208,10 @@ class ApistFilter
     }
 
     /**
-     * @param mixed $selector
-     * @return ApistFilter
+     * @param string $selector
+     * @return Crawler
      */
-    public function closest($selector)
+    public function closest(string $selector): Crawler
     {
         $this->guardCrawler();
         $this->node = $this->node->parents();
@@ -224,10 +220,10 @@ class ApistFilter
     }
 
     /**
-     * @param $attribute
-     * @return ApistFilter
+     * @param string $attribute
+     * @return null|string
      */
-    public function attr($attribute)
+    public function attr(string $attribute): ?string
     {
         $this->guardCrawler();
 
@@ -235,10 +231,10 @@ class ApistFilter
     }
 
     /**
-     * @param $attribute
-     * @return ApistFilter
+     * @param string $attribute
+     * @return bool
      */
-    public function hasAttr($attribute)
+    public function hasAttr(string $attribute): bool
     {
         $this->guardCrawler();
 
@@ -246,10 +242,10 @@ class ApistFilter
     }
 
     /**
-     * @param $position
-     * @return ApistFilter
+     * @param int $position
+     * @return Crawler
      */
-    public function eq($position)
+    public function eq(int $position): Crawler
     {
         $this->guardCrawler();
 
@@ -257,9 +253,9 @@ class ApistFilter
     }
 
     /**
-     * @return ApistFilter
+     * @return Crawler
      */
-    public function first()
+    public function first(): Crawler
     {
         $this->guardCrawler();
 
@@ -267,9 +263,9 @@ class ApistFilter
     }
 
     /**
-     * @return ApistFilter
+     * @return Crawler
      */
-    public function last()
+    public function last(): Crawler
     {
         $this->guardCrawler();
 
@@ -277,7 +273,7 @@ class ApistFilter
     }
 
     /**
-     * @return ApistFilter
+     * @return Crawler|bool|string
      */
     public function element()
     {
@@ -285,19 +281,19 @@ class ApistFilter
     }
 
     /**
-     * @param $callback
-     * @return ApistFilter
+     * @param callable $callback
+     * @return mixed
      */
-    public function call($callback)
+    public function call(callable $callback)
     {
         return $callback($this->node);
     }
 
     /**
-     * @param mixed $mask
-     * @return ApistFilter
+     * @param string $mask
+     * @return string
      */
-    public function trim($mask = " \t\n\r\0\x0B")
+    public function trim(string $mask = " \t\n\r\0\x0B"): string
     {
         $this->guardText();
 
@@ -305,10 +301,10 @@ class ApistFilter
     }
 
     /**
-     * @param mixed $mask
-     * @return ApistFilter
+     * @param string $mask
+     * @return string
      */
-    public function ltrim($mask = " \t\n\r\0\x0B")
+    public function ltrim(string $mask = " \t\n\r\0\x0B"): string
     {
         $this->guardText();
 
@@ -316,10 +312,10 @@ class ApistFilter
     }
 
     /**
-     * @param mixed $mask
-     * @return ApistFilter
+     * @param string $mask
+     * @return string
      */
-    public function rtrim($mask = " \t\n\r\0\x0B")
+    public function rtrim(string $mask = " \t\n\r\0\x0B"): string
     {
         $this->guardText();
 
@@ -327,12 +323,12 @@ class ApistFilter
     }
 
     /**
-     * @param mixed $search
-     * @param mixed $replace
-     * @param null|mixed $count
-     * @return ApistFilter
+     * @param array|string $search
+     * @param array|string $replace
+     * @param null|int $count
+     * @return string
      */
-    public function str_replace($search, $replace, $count = null)
+    public function str_replace($search, $replace, $count = null): string
     {
         $this->guardText();
 
@@ -340,9 +336,9 @@ class ApistFilter
     }
 
     /**
-     * @return ApistFilter
+     * @return int
      */
-    public function intval()
+    public function intval(): int
     {
         $this->guardText();
 
@@ -350,9 +346,9 @@ class ApistFilter
     }
 
     /**
-     * @return ApistFilter
+     * @return float
      */
-    public function floatval()
+    public function floatval(): float
     {
         $this->guardText();
 
@@ -360,25 +356,29 @@ class ApistFilter
     }
 
     /**
-     * @return ApistFilter
+     * @return bool
      */
-    public function exists()
+    public function exists(): bool
     {
-        return count($this->node) > 0;
+        if ($this->node instanceof Crawler) {
+            return $this->node->count() > 0;
+        }
+
+        return (bool) $this->node;
     }
 
     /**
-     * @param $callback
-     * @return ApistFilter
+     * @param callable $callback
+     * @return mixed
      */
-    public function check($callback)
+    public function check(callable $callback)
     {
         return $this->call($callback);
     }
 
     /**
-     * @param $blueprint
-     * @return ApistFilter
+     * @param array|ApistSelector $blueprint
+     * @return mixed
      */
     public function then($blueprint)
     {
@@ -390,23 +390,19 @@ class ApistFilter
     }
 
     /**
-     * @param $blueprint
-     * @return ApistFilter
+     * @param null|array|callable $blueprint
+     * @return array
      */
-    public function each($blueprint = null)
+    public function each($blueprint = null): array
     {
         $callback = $blueprint;
 
         if (is_null($callback)) {
-            $callback = function ($node) {
-                return $node;
-            };
+            $callback = (fn ($node) => $node);
         }
 
         if (!is_callable($callback)) {
-            $callback = function ($node) use ($blueprint) {
-                return $this->method->parseBlueprint($blueprint, $node);
-            };
+            $callback = fn (DomCrawler $node) => $this->method->parseBlueprint($blueprint, $node);
         }
 
         return $this->node->each($callback);

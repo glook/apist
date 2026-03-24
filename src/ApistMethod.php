@@ -5,8 +5,10 @@ namespace glook\apist;
 use glook\apist\Selectors\ApistSelector;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
 class ApistMethod
 {
@@ -16,12 +18,12 @@ class ApistMethod
     protected $resource;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $url;
 
     /**
-     * @var ApistSelector[]|ApistSelector
+     * @var array|ApistSelector|null
      */
     protected $schemaBlueprint;
 
@@ -31,24 +33,21 @@ class ApistMethod
     protected $method = 'GET';
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $content;
 
-    /**
-     * @var Crawler
-     */
-    protected $crawler;
+    protected Crawler $crawler;
 
     /**
-     * @var ResponseInterface
+     * @var ResponseInterface|null
      */
     protected $response;
 
     /**
-     * @param $resource
-     * @param $url
-     * @param $schemaBlueprint
+     * @param Apist $resource
+     * @param string|null $url
+     * @param array|ApistSelector|null $schemaBlueprint
      */
     public function __construct($resource, $url, $schemaBlueprint)
     {
@@ -62,7 +61,7 @@ class ApistMethod
      * Perform method action
      *
      * @param array $arguments
-     * @return array
+     * @return array|string
      */
     public function get(array $arguments = [])
     {
@@ -92,6 +91,7 @@ class ApistMethod
      * Make http request
      *
      * @param array $arguments
+     * @throws GuzzleException
      */
     protected function makeRequest(array $arguments = [])
     {
@@ -105,11 +105,11 @@ class ApistMethod
     }
 
     /**
-     * @param $blueprint
-     * @param null $node
-     * @return array|string
+     * @param array|ApistSelector|null $blueprint
+     * @param DomCrawler|null $node
+     * @return mixed
      */
-    public function parseBlueprint($blueprint, $node = null)
+    public function parseBlueprint($blueprint, ?DomCrawler $node = null)
     {
         if (is_null($blueprint)) {
             return $this->content;
@@ -118,7 +118,7 @@ class ApistMethod
         if (!is_array($blueprint)) {
             $blueprint = $this->parseBlueprintValue($blueprint, $node);
         } else {
-            array_walk_recursive($blueprint, function (&$value) use ($node) {
+            array_walk_recursive($blueprint, function (&$value) use ($node): void {
                 $value = $this->parseBlueprintValue($value, $node);
             });
         }
@@ -127,11 +127,11 @@ class ApistMethod
     }
 
     /**
-     * @param $value
-     * @param $node
-     * @return array|string
+     * @param mixed $value
+     * @param DomCrawler|null $node
+     * @return mixed
      */
-    protected function parseBlueprintValue($value, $node)
+    protected function parseBlueprintValue($value, ?DomCrawler $node)
     {
         if ($value instanceof ApistSelector) {
             return $value->getValue($this, $node);
@@ -143,9 +143,9 @@ class ApistMethod
     /**
      * Response with error
      *
-     * @param $status
-     * @param $reason
-     * @param $url
+     * @param int $status
+     * @param string $reason
+     * @param string $url
      * @return array
      */
     protected function errorResponse(int $status, string $reason, string $url): array
@@ -190,7 +190,7 @@ class ApistMethod
      * @param string $content
      * @return $this
      */
-    public function setContent($content)
+    public function setContent(string $content): self
     {
         $this->content = $content;
         $this->crawler->addContent($content);
@@ -217,9 +217,9 @@ class ApistMethod
     }
 
     /**
-     * @return ResponseInterface
+     * @return ResponseInterface|null
      */
-    public function getResponse(): ResponseInterface
+    public function getResponse(): ?ResponseInterface
     {
         return $this->response;
     }
