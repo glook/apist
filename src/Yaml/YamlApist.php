@@ -1,6 +1,6 @@
-<?php namespace Glook\Apist\Yaml;
+<?php namespace glook\apist\Yaml;
 
-use Glook\Apist\Apist;
+use glook\apist\Apist;
 
 class YamlApist extends Apist
 {

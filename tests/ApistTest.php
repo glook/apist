@@ -1,6 +1,8 @@
 <?php
 
-use Glook\Apist\Apist;
+namespace glook\apist\tests;
+
+use glook\apist\Apist;
 use PHPUnit\Framework\TestCase;
 
 

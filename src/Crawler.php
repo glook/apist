@@ -1,4 +1,4 @@
-<?php namespace Glook\Apist;
+<?php namespace glook\apist;
 
 use Symfony\Component\DomCrawler\Crawler as SymfonyCrawler;
 

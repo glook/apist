@@ -1,37 +1,38 @@
 <?php
 
-use Glook\Apist\Apist;
+namespace glook\apist\tests;
+
+use glook\apist\Apist;
 
 class TestApi extends Apist
 {
-	protected $baseUri = 'http://example.com';
+    protected $baseUri = 'http://example.com';
 
 
-	public function index()
-	{
-		return $this->get('/', [
-			'title'     => Apist::filter('.page_head .title'),
-			'copyright' => Apist::filter('.copyright .about a')->first()->attr('href'),
-			'posts'     => Apist::filter('.posts .post')->each(function ()
-			{
-				return [
-					'title' => Apist::filter('h1.title a')->text()
-				];
-			}),
-		]);
-	}
+    public function index()
+    {
+        return $this->get('/', [
+            'title' => Apist::filter('.page_head .title'),
+            'copyright' => Apist::filter('.copyright .about a')->first()->attr('href'),
+            'posts' => Apist::filter('.posts .post')->each(function () {
+                return [
+                    'title' => Apist::filter('h1.title a')->text()
+                ];
+            }),
+        ]);
+    }
 
-	public function element_not_found()
-	{
-		return $this->get('/', [
-			'title' => Apist::filter('.page_header')
-		]);
-	}
+    public function element_not_found()
+    {
+        return $this->get('/', [
+            'title' => Apist::filter('.page_header')
+        ]);
+    }
 
-	public function non_array_blueprint()
-	{
-		return $this->get('/', Apist::filter('.page_head .title'));
-	}
+    public function non_array_blueprint()
+    {
+        return $this->get('/', Apist::filter('.page_head .title'));
+    }
 
 
     public function plain_return()

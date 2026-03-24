@@ -1,7 +1,7 @@
-<?php namespace Glook\Apist;
+<?php namespace glook\apist;
 
 
-use Glook\Apist\Selectors\ApistSelector;
+use glook\apist\Selectors\ApistSelector;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;

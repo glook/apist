@@ -1,8 +1,8 @@
-<?php namespace Glook\Apist;
+<?php namespace glook\apist;
 
-use Glook\Apist\Selectors\ApistFilter;
-use Glook\Apist\Selectors\ApistSelector;
-use Glook\Apist\Yaml\YamlApist;
+use glook\apist\Selectors\ApistFilter;
+use glook\apist\Selectors\ApistSelector;
+use glook\apist\Yaml\YamlApist;
 use GuzzleHttp\Client;
 
 abstract class Apist

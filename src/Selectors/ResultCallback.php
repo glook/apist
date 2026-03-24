@@ -1,6 +1,6 @@
-<?php namespace Glook\Apist\Selectors;
+<?php namespace glook\apist\Selectors;
 
-use Glook\Apist\ApistMethod;
+use glook\apist\ApistMethod;
 use Symfony\Component\DomCrawler\Crawler;
 
 class ResultCallback
