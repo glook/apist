@@ -40,4 +40,19 @@ class TestApi extends Apist
         return $this->get('/');
     }
 
+    public function parseContent($content, $blueprint)
+    {
+        return $this->parse($content, $blueprint);
+    }
+
+    public function doPost($url, $blueprint = null, $options = [])
+    {
+        return $this->post($url, $blueprint, $options);
+    }
+
+    public function customMethod($node)
+    {
+        return $node->text() . '_custom';
+    }
+
 }

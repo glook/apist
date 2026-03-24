@@ -62,4 +62,37 @@ class ApistMethodTest extends TestCase
         $this->assertIsString($result);
     }
 
+    /** @test */
+    public function it_sets_and_gets_http_method()
+    {
+        $result = $this->resource->getLastMethod();
+        // Before any request, lastMethod is null
+        $this->assertNull($result);
+
+        $this->resource->plain_return();
+
+        $lastMethod = $this->resource->getLastMethod();
+        $this->assertEquals('GET', $lastMethod->getMethod());
+    }
+
+    /** @test */
+    public function it_parses_content_without_http_request()
+    {
+        $html = '<html><body><h1>Direct Parse</h1></body></html>';
+        $result = $this->resource->parseContent($html, [
+            'heading' => \glook\apist\Apist::filter('h1'),
+        ]);
+
+        $this->assertEquals('Direct Parse', $result['heading']);
+    }
+
+    /** @test */
+    public function it_returns_raw_content_with_null_blueprint()
+    {
+        $html = '<html><body><p>Raw</p></body></html>';
+        $result = $this->resource->parseContent($html, null);
+
+        $this->assertStringContainsString('Raw', $result);
+    }
+
 }

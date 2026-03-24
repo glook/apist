@@ -55,7 +55,10 @@ class Parser
 				{
 					$methodConfig['blueprint'] = null;
 				}
-				$methodConfig['blueprint'] = $this->parseBlueprint($methodConfig['blueprint']);
+				if ( ! is_null($methodConfig['blueprint']))
+				{
+					$methodConfig['blueprint'] = $this->parseBlueprint($methodConfig['blueprint']);
+				}
 				$this->methods[$method] = $methodConfig;
 			}
 		}
@@ -63,10 +66,10 @@ class Parser
 
 	/**
 	 * @param $blueprint
-	 * @return array
+	 * @return mixed
 	 */
-	protected function parseBlueprint($blueprint): array
-    {
+	protected function parseBlueprint($blueprint)
+	{
 		$callback = function (&$value)
 		{
 			if (is_string($value))
@@ -172,4 +175,4 @@ class Parser
 		});
 		return $method;
 	}
-} 
+}
