@@ -1,6 +1,6 @@
-<?php namespace SleepingOwl\Apist\Selectors;
+<?php namespace Glook\Apist\Selectors;
 
-use SleepingOwl\Apist\Methods\ApistMethod;
+use Glook\Apist\ApistMethod;
 use Symfony\Component\DomCrawler\Crawler;
 
 class ResultCallback

@@ -1,6 +1,8 @@
-<?php namespace SleepingOwl\Apist\Yaml;
+<?php namespace Glook\Apist\Yaml;
 
-class YamlApist extends \SleepingOwl\Apist\Apist
+use Glook\Apist\Apist;
+
+class YamlApist extends Apist
 {
 	/**
 	 * @var Parser

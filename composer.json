@@ -1,30 +1,36 @@
 {
-    "name": "sleeping-owl/apist",
-    "description": "Package to provide api-like access to foreign sites based on html parsing",
-	"homepage": "http://sleeping-owl-apist.gopagoda.com",
-	"license": "MIT",
-	"keywords": ["api", "crawler"],
-    "authors": [
-        {
-            "name": "Sleeping Owl",
-            "email": "owl.sleeping@yahoo.com"
-        }
-    ],
-    "require": {
-        "php": ">=5.4.0",
-		"guzzlehttp/guzzle": "5.*",
-		"symfony/css-selector": "~2.0",
-		"symfony/dom-crawler": "~2.0",
-		"symfony/yaml": "~2.0"
+  "name": "glook/apist",
+  "description": "Package to provide api-like access to foreign sites based on html parsing (fork of sleeping-owl/apist package with updated dependencies)",
+  "homepage": "https://github.com/glook/apist",
+  "license": "MIT",
+  "keywords": [
+    "api",
+    "crawler"
+  ],
+  "authors": [
+    {
+      "name": "Sleeping Owl",
+      "email": "owl.sleeping@yahoo.com"
     },
-	"require-dev": {
-		"phpunit/phpunit": "4.*",
-		"mockery/mockery": "0.*"
-	},
-    "autoload": {
-        "psr-0": {
-            "SleepingOwl\\Apist": "src/"
-        }
-    },
-    "minimum-stability": "stable"
+    {
+      "name": "Andrey Polyakov",
+      "email": "andrey@polyakov.im"
+    }
+  ],
+  "require": {
+    "php": ">=7.4",
+    "guzzlehttp/guzzle": "^7.10.0",
+    "symfony/css-selector": "^5.4.45",
+    "symfony/dom-crawler": "^5.4.48",
+    "symfony/yaml": "^5.4.45"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.6.26"
+  },
+  "autoload": {
+    "psr-4": {
+      "Glook\\Apist\\": "src"
+    }
+  },
+  "minimum-stability": "stable"
 }
