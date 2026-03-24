@@ -102,11 +102,30 @@ abstract class Apist
     }
 
     /**
+     * fallback method for backward compatibility
+     * @return string
+     */
+    public function getBaseUrl()
+    {
+        return $this->getBaseUri();
+    }
+
+    /**
      * @param string $baseUri
      */
     public function setBaseUri(string $baseUri)
     {
         $this->baseUri = $baseUri;
+    }
+
+    /**
+     * fallback method for backward compatibility
+     * @param string $baseUrl
+     * @return void
+     */
+    public function setBaseUrl(string $baseUrl)
+    {
+        $this->setBaseUri($baseUrl);
     }
 
     /**
