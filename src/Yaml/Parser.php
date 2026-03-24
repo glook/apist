@@ -1,7 +1,7 @@
-<?php namespace Glook\Apist\Yaml;
+<?php namespace glook\apist\Yaml;
 
-use Glook\Apist\Apist;
-use Glook\Apist\Selectors\ApistSelector;
+use glook\apist\Apist;
+use glook\apist\Selectors\ApistSelector;
 use Symfony\Component\Yaml\Yaml;
 
 class Parser

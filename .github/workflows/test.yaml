@@ -13,14 +13,6 @@ jobs:
       matrix:
         php: [ '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5' ]
         include:
-          - php: 7.0
-            phpunit: 6
-          - php: 7.1
-            phpunit: 6
-          - php: 7.2
-            phpunit: 7
-          - php: 7.3
-            phpunit: 7
           - php: 7.4
             phpunit: 7
           - php: 8.0

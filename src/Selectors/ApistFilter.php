@@ -1,8 +1,8 @@
-<?php namespace Glook\Apist\Selectors;
+<?php namespace glook\apist\Selectors;
 
-use Glook\Apist\Apist;
-use Glook\Apist\ApistMethod;
-use Glook\Apist\Crawler;
+use glook\apist\Apist;
+use glook\apist\ApistMethod;
+use glook\apist\Crawler;
 
 /**
  * Class ApistFilter

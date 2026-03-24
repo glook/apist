@@ -25,12 +25,22 @@
     "symfony/yaml": "^5.4.45"
   },
   "require-dev": {
-    "phpunit/phpunit": "^9.6.26"
+    "phpunit/phpunit": "^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0"
   },
   "autoload": {
     "psr-4": {
-      "Glook\\Apist\\": "src"
+      "glook\\apist\\": "src"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "glook\\apist\\tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "phpunit --coverage-text",
+    "test-ci": "phpunit --coverage-text --coverage-clover=coverage-clover.xml",
+    "test-coverage": "phpunit --path-coverage --coverage-html=CodeCoverage"
   },
   "minimum-stability": "stable"
 }
