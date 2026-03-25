@@ -47,7 +47,7 @@ abstract class Apist
     /**
      * @return Client
      */
-    public function getGuzzle()
+    public function getGuzzle(): Client
     {
         return $this->guzzle;
     }
@@ -66,7 +66,7 @@ abstract class Apist
      * @param string $cssSelector
      * @return ApistSelector
      */
-    public static function filter($cssSelector)
+    public static function filter($cssSelector): ApistSelector
     {
         return new ApistSelector($cssSelector);
     }
@@ -76,7 +76,7 @@ abstract class Apist
      *
      * @return ApistSelector
      */
-    public static function current()
+    public static function current(): ApistSelector
     {
         return static::filter('*');
     }
@@ -227,5 +227,17 @@ abstract class Apist
     protected function delete(string $url, $blueprint = null, array $options = [])
     {
         return $this->request('DELETE', $url, $blueprint, array_merge($this->requestOptions, $options));
+    }
+
+    /**
+     * Called before raw HTML content is stored and fed to the DOM crawler.
+     * Override in subclasses to transform content prior to parsing.
+     *
+     * @param string $content Raw HTML response body
+     * @return string Transformed content
+     */
+    public function beforeParse(string $content): string
+    {
+        return $content;
     }
 }
