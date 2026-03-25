@@ -31,6 +31,12 @@ abstract class Apist
     protected $suppressExceptions = true;
 
     /**
+     * List of default request options to be merged with method call options
+     * @var array
+     */
+    protected array $requestOptions = [];
+
+    /**
      * @param array $options
      */
     public function __construct(array $options = [])
@@ -177,7 +183,7 @@ abstract class Apist
      */
     protected function get(string $url, $blueprint = null, array $options = [])
     {
-        return $this->request('GET', $url, $blueprint, $options);
+        return $this->request('GET', $url, $blueprint, array_merge($this->requestOptions, $options));
     }
 
     /**
@@ -188,7 +194,7 @@ abstract class Apist
      */
     protected function head(string $url, $blueprint = null, array $options = [])
     {
-        return $this->request('HEAD', $url, $blueprint, $options);
+        return $this->request('HEAD', $url, $blueprint, array_merge($this->requestOptions, $options));
     }
 
     /**
@@ -199,7 +205,7 @@ abstract class Apist
      */
     protected function post(string $url, $blueprint = null, array $options = [])
     {
-        return $this->request('POST', $url, $blueprint, $options);
+        return $this->request('POST', $url, $blueprint, array_merge($this->requestOptions, $options));
     }
 
     /**
@@ -210,7 +216,7 @@ abstract class Apist
      */
     protected function put(string $url, $blueprint = null, array $options = [])
     {
-        return $this->request('PUT', $url, $blueprint, $options);
+        return $this->request('PUT', $url, $blueprint, array_merge($this->requestOptions, $options));
     }
 
     /**
@@ -221,7 +227,7 @@ abstract class Apist
      */
     protected function patch(string $url, $blueprint = null, array $options = [])
     {
-        return $this->request('PATCH', $url, $blueprint, $options);
+        return $this->request('PATCH', $url, $blueprint, array_merge($this->requestOptions, $options));
     }
 
     /**
@@ -232,6 +238,6 @@ abstract class Apist
      */
     protected function delete(string $url, $blueprint = null, array $options = [])
     {
-        return $this->request('DELETE', $url, $blueprint, $options);
+        return $this->request('DELETE', $url, $blueprint, array_merge($this->requestOptions, $options));
     }
 }

@@ -52,4 +52,34 @@ class TestApi extends Apist
     {
         return $node->text() . '_custom';
     }
+
+    public function setRequestOptions(array $options): void
+    {
+        $this->requestOptions = $options;
+    }
+
+    public function doGet($url, $blueprint = null, $options = [])
+    {
+        return $this->get($url, $blueprint, $options);
+    }
+
+    public function doPut($url, $blueprint = null, $options = [])
+    {
+        return $this->put($url, $blueprint, $options);
+    }
+
+    public function doPatch($url, $blueprint = null, $options = [])
+    {
+        return $this->patch($url, $blueprint, $options);
+    }
+
+    public function doDelete($url, $blueprint = null, $options = [])
+    {
+        return $this->delete($url, $blueprint, $options);
+    }
+
+    public function doHead($url, $blueprint = null, $options = [])
+    {
+        return $this->head($url, $blueprint, $options);
+    }
 }
