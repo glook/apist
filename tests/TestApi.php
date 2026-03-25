@@ -6,7 +6,7 @@ use glook\apist\Apist;
 
 class TestApi extends Apist
 {
-    protected $baseUri = 'http://example.com';
+    protected ?string $baseUri = 'http://example.com';
 
     public function index()
     {

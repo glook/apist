@@ -2,7 +2,6 @@
 
 namespace glook\apist;
 
-use glook\apist\Selectors\ApistFilter;
 use glook\apist\Selectors\ApistSelector;
 use glook\apist\Yaml\YamlApist;
 use GuzzleHttp\Client;
@@ -10,22 +9,19 @@ use GuzzleHttp\Client;
 abstract class Apist
 {
     /**
-     * @var string
+     * @var string|null
      */
-    protected $baseUri;
+    protected ?string $baseUri = null;
+
+    protected Client $guzzle;
 
     /**
-     * @var Client
-     */
-    protected $guzzle;
-
-    /**
-     * @var ApistMethod
+     * @var ApistMethod|null
      */
     protected $currentMethod;
 
     /**
-     * @var ApistMethod
+     * @var ApistMethod|null
      */
     protected $lastMethod;
 
@@ -37,7 +33,7 @@ abstract class Apist
     /**
      * @param array $options
      */
-    public function __construct($options = [])
+    public function __construct(array $options = [])
     {
         $options['base_uri'] = $this->getBaseUri();
         $this->guzzle = new Client($options);
@@ -54,7 +50,7 @@ abstract class Apist
     /**
      * @param Client $guzzle
      */
-    public function setGuzzle($guzzle)
+    public function setGuzzle(Client $guzzle): void
     {
         $this->guzzle = $guzzle;
     }
@@ -62,8 +58,8 @@ abstract class Apist
     /**
      * Create filter object
      *
-     * @param $cssSelector
-     * @return ApistFilter
+     * @param string $cssSelector
+     * @return ApistSelector
      */
     public static function filter($cssSelector)
     {
@@ -73,7 +69,7 @@ abstract class Apist
     /**
      * Get current node
      *
-     * @return ApistFilter
+     * @return ApistSelector
      */
     public static function current()
     {
@@ -83,35 +79,35 @@ abstract class Apist
     /**
      * Initialize api from yaml configuration file
      *
-     * @param $file
+     * @param string $file
      * @return YamlApist
      */
-    public static function fromYaml($file): YamlApist
+    public static function fromYaml(string $file): YamlApist
     {
         return new YamlApist($file, []);
     }
 
     /**
-     * @return ApistMethod
+     * @return ApistMethod|null
      */
-    public function getCurrentMethod(): ApistMethod
+    public function getCurrentMethod(): ?ApistMethod
     {
         return $this->currentMethod;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getBaseUri()
+    public function getBaseUri(): ?string
     {
         return $this->baseUri;
     }
 
     /**
      * fallback method for backward compatibility
-     * @return string
+     * @return string|null
      */
-    public function getBaseUrl()
+    public function getBaseUrl(): ?string
     {
         return $this->getBaseUri();
     }
@@ -119,7 +115,7 @@ abstract class Apist
     /**
      * @param string $baseUri
      */
-    public function setBaseUri(string $baseUri)
+    public function setBaseUri(string $baseUri): void
     {
         $this->baseUri = $baseUri;
     }
@@ -129,15 +125,15 @@ abstract class Apist
      * @param string $baseUrl
      * @return void
      */
-    public function setBaseUrl(string $baseUrl)
+    public function setBaseUrl(string $baseUrl): void
     {
         $this->setBaseUri($baseUrl);
     }
 
     /**
-     * @return ApistMethod
+     * @return ApistMethod|null
      */
-    public function getLastMethod()
+    public function getLastMethod(): ?ApistMethod
     {
         return $this->lastMethod;
     }
@@ -159,13 +155,13 @@ abstract class Apist
     }
 
     /**
-     * @param $httpMethod
-     * @param $url
-     * @param $blueprint
+     * @param string $httpMethod
+     * @param string $url
+     * @param array|ApistSelector|null $blueprint
      * @param array $options
      * @return array|string
      */
-    protected function request($httpMethod, $url, $blueprint, array $options = [])
+    protected function request(string $httpMethod, string $url, $blueprint, array $options = [])
     {
         $this->currentMethod = new ApistMethod($this, $url, $blueprint);
         $this->lastMethod = $this->currentMethod;
@@ -178,11 +174,11 @@ abstract class Apist
     }
 
     /**
-     * @param $content
-     * @param $blueprint
+     * @param string $content
+     * @param array|ApistSelector|null $blueprint
      * @return array|string
      */
-    protected function parse($content, $blueprint)
+    protected function parse(string $content, $blueprint)
     {
         $this->currentMethod = new ApistMethod($this, null, $blueprint);
         $this->currentMethod->setContent($content);
@@ -193,67 +189,67 @@ abstract class Apist
     }
 
     /**
-     * @param $url
-     * @param $blueprint
+     * @param string $url
+     * @param array|ApistSelector|null $blueprint
      * @param array $options
      * @return array|string
      */
-    protected function get($url, $blueprint = null, array $options = [])
+    protected function get(string $url, $blueprint = null, array $options = [])
     {
         return $this->request('GET', $url, $blueprint, $options);
     }
 
     /**
-     * @param $url
-     * @param $blueprint
+     * @param string $url
+     * @param array|ApistSelector|null $blueprint
      * @param array $options
      * @return array|string
      */
-    protected function head($url, $blueprint = null, array $options = [])
+    protected function head(string $url, $blueprint = null, array $options = [])
     {
         return $this->request('HEAD', $url, $blueprint, $options);
     }
 
     /**
-     * @param $url
-     * @param $blueprint
+     * @param string $url
+     * @param array|ApistSelector|null $blueprint
      * @param array $options
      * @return array|string
      */
-    protected function post($url, $blueprint = null, array $options = [])
+    protected function post(string $url, $blueprint = null, array $options = [])
     {
         return $this->request('POST', $url, $blueprint, $options);
     }
 
     /**
-     * @param $url
-     * @param $blueprint
+     * @param string $url
+     * @param array|ApistSelector|null $blueprint
      * @param array $options
      * @return array|string
      */
-    protected function put($url, $blueprint = null, array $options = [])
+    protected function put(string $url, $blueprint = null, array $options = [])
     {
         return $this->request('PUT', $url, $blueprint, $options);
     }
 
     /**
-     * @param $url
-     * @param $blueprint
+     * @param string $url
+     * @param array|ApistSelector|null $blueprint
      * @param array $options
      * @return array|string
      */
-    protected function patch($url, $blueprint = null, array $options = [])
+    protected function patch(string $url, $blueprint = null, array $options = [])
     {
         return $this->request('PATCH', $url, $blueprint, $options);
     }
 
     /**
-     * @param $url
-     * @param $blueprint
+     * @param string $url
+     * @param array|ApistSelector|null $blueprint
      * @param array $options
      * @return array|string
      */
-    protected function delete($url, $blueprint = null, array $options = [])
+    protected function delete(string $url, $blueprint = null, array $options = [])
     {
         return $this->request('DELETE', $url, $blueprint, $options);
     }

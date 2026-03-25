@@ -7,22 +7,56 @@ use glook\apist\ApistMethod;
 use InvalidArgumentException;
 use Symfony\Component\DomCrawler\Crawler;
 
+/**
+ * Class ApistSelector
+ *
+ * @method $this text()
+ * @method $this html()
+ * @method $this filter(string $selector)
+ * @method $this filterNodes(string $selector)
+ * @method $this find(string $selector)
+ * @method $this children()
+ * @method $this prev()
+ * @method $this prevAll()
+ * @method $this prevUntil(string $selector)
+ * @method $this next()
+ * @method $this nextAll()
+ * @method $this nextUntil(string $selector)
+ * @method $this nodeUntil(string $selector, string $direction)
+ * @method $this is(string $selector)
+ * @method $this closest(string $selector)
+ * @method $this attr(string $attribute)
+ * @method $this hasAttr(string $attribute)
+ * @method $this eq(int $position)
+ * @method $this first()
+ * @method $this last()
+ * @method $this element()
+ * @method $this call(callable $callback)
+ * @method $this trim(string $mask = " \t\n\r\0\x0B")
+ * @method $this ltrim(string $mask = " \t\n\r\0\x0B")
+ * @method $this rtrim(string $mask = " \t\n\r\0\x0B")
+ * @method $this str_replace(array|string $search, array|string $replace, ?int $count = null)
+ * @method $this intval()
+ * @method $this floatval()
+ * @method $this exists()
+ * @method $this check(callable $callback)
+ * @method $this then(array|ApistSelector $blueprint)
+ * @method $this else(array|ApistSelector $blueprint)
+ * @method $this each(null|array|callable $blueprint = null)
+ */
 class ApistSelector
 {
-    /**
-     * @var string
-     */
-    protected $selector;
+    protected string $selector;
 
     /**
      * @var ResultCallback[]
      */
-    protected $resultMethodChain = [];
+    protected array $resultMethodChain = [];
 
     /**
-     * @param $selector
+     * @param string $selector
      */
-    public function __construct($selector)
+    public function __construct(string $selector)
     {
         $this->selector = $selector;
     }
@@ -31,8 +65,8 @@ class ApistSelector
      * Get value from content by css selector
      *
      * @param ApistMethod $method
-     * @param Crawler $rootNode
-     * @return array|null|string|Crawler
+     * @param Crawler|null $rootNode
+     * @return mixed
      */
     public function getValue(ApistMethod $method, ?Crawler $rootNode = null)
     {
@@ -47,11 +81,11 @@ class ApistSelector
     /**
      * Save callable method as result callback to perform it after getValue method
      *
-     * @param $name
-     * @param $arguments
+     * @param string $name
+     * @param array $arguments
      * @return $this
      */
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments)
     {
         return $this->addCallback($name, $arguments);
     }
@@ -61,11 +95,11 @@ class ApistSelector
      *
      * @param Crawler $node
      * @param ApistMethod $method
-     * @return array|string|Crawler
+     * @return mixed
      */
     protected function applyResultCallbackChain(Crawler $node, ApistMethod $method)
     {
-        if (empty($this->resultMethodChain)) {
+        if ($this->resultMethodChain === []) {
             $this->addCallback('text');
         }
         /** @var ResultCallback[] $traceStack */
@@ -88,11 +122,11 @@ class ApistSelector
     }
 
     /**
-     * @param $name
-     * @param $arguments
+     * @param string $name
+     * @param array $arguments
      * @return $this
      */
-    public function addCallback($name, $arguments = [])
+    public function addCallback(string $name, array $arguments = []): self
     {
         $resultCallback = new ResultCallback($name, $arguments);
         $this->resultMethodChain[] = $resultCallback;
@@ -101,11 +135,11 @@ class ApistSelector
     }
 
     /**
-     * @param $e
+     * @param Exception $e
      * @param ResultCallback[] $traceStack
      * @return string
      */
-    protected function createExceptionMessage(Exception $e, $traceStack)
+    protected function createExceptionMessage(Exception $e, array $traceStack): string
     {
         $message = "[ filter({$this->selector})";
         foreach ($traceStack as $callback) {

@@ -3,26 +3,26 @@
 namespace glook\apist\Selectors;
 
 use glook\apist\ApistMethod;
+use glook\apist\Crawler;
 use InvalidArgumentException;
-use Symfony\Component\DomCrawler\Crawler;
 
 class ResultCallback
 {
     /**
      * @var string
      */
-    protected $methodName;
+    protected string $methodName;
 
     /**
      * @var array
      */
-    protected $arguments;
+    protected array $arguments;
 
     /**
-     * @param $methodName
-     * @param $arguments
+     * @param string $methodName
+     * @param array $arguments
      */
-    public function __construct($methodName, $arguments)
+    public function __construct(string $methodName, array $arguments)
     {
         $this->methodName = $methodName;
         $this->arguments = $arguments;
@@ -31,9 +31,9 @@ class ResultCallback
     /**
      * Apply result callback to the $node, provided by $method
      *
-     * @param Crawler $node
+     * @param array|Crawler|string|bool $node
      * @param ApistMethod $method
-     * @return array|string
+     * @return mixed
      */
     public function apply($node, ApistMethod $method)
     {
@@ -41,19 +41,21 @@ class ResultCallback
             return $this->applyToArray($node, $method);
         }
 
-        if ($this->methodName === 'else') {
+        $methodName = $this->methodName;
+
+        if ($methodName === 'else') {
             if (is_bool($node)) {
                 $node = !$node;
             }
-            $this->methodName = 'then';
+            $methodName = 'then';
         }
 
         $filter = new ApistFilter($node, $method);
 
-        if (method_exists($filter, $this->methodName)) {
+        if (method_exists($filter, $methodName)) {
             return call_user_func_array([
                     $filter,
-                    $this->methodName,
+                    $methodName,
                 ], $this->arguments);
         }
 
@@ -69,10 +71,15 @@ class ResultCallback
             return $this->callGlobalFunction($node);
         }
 
-        throw new InvalidArgumentException("Method '{$this->methodName}' was not found");
+        throw new InvalidArgumentException("Method '{$methodName}' was not found");
     }
 
-    protected function applyToArray($array, ApistMethod $method)
+    /**
+     * @param array $array
+     * @param ApistMethod $method
+     * @return array
+     */
+    protected function applyToArray(array $array, ApistMethod $method): array
     {
         $result = [];
         foreach ($array as $node) {
@@ -86,14 +93,14 @@ class ResultCallback
      * @param ApistMethod $method
      * @return bool
      */
-    protected function isResourceMethod(ApistMethod $method)
+    protected function isResourceMethod(ApistMethod $method): bool
     {
         return method_exists($method->getResource(), $this->methodName);
     }
 
     /**
      * @param ApistMethod $method
-     * @param $node
+     * @param Crawler|string|bool $node
      * @return mixed
      */
     protected function callResourceMethod(ApistMethod $method, $node)
@@ -108,16 +115,16 @@ class ResultCallback
     }
 
     /**
-     * @param $node
+     * @param Crawler|string|bool $node
      * @return bool
      */
-    protected function isNodeMethod($node)
+    protected function isNodeMethod($node): bool
     {
         return method_exists($node, $this->methodName);
     }
 
     /**
-     * @param $node
+     * @param object $node
      * @return mixed
      */
     protected function callNodeMethod($node)
@@ -131,13 +138,13 @@ class ResultCallback
     /**
      * @return bool
      */
-    protected function isGlobalFunction()
+    protected function isGlobalFunction(): bool
     {
         return function_exists($this->methodName);
     }
 
     /**
-     * @param $node
+     * @param string|Crawler $node
      * @return mixed
      */
     protected function callGlobalFunction($node)
@@ -154,7 +161,7 @@ class ResultCallback
     /**
      * @return string
      */
-    public function getMethodName()
+    public function getMethodName(): string
     {
         return $this->methodName;
     }
@@ -162,7 +169,7 @@ class ResultCallback
     /**
      * @return array
      */
-    public function getArguments()
+    public function getArguments(): array
     {
         return $this->arguments;
     }
