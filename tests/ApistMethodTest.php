@@ -94,4 +94,69 @@ class ApistMethodTest extends TestCase
 
         $this->assertStringContainsString('Raw', $result);
     }
+
+    /** @test */
+    public function default_before_parse_returns_content_unchanged()
+    {
+        $html = '<html><body><h1>Hello</h1></body></html>';
+        $result = $this->resource->parseContent($html, [
+            'heading' => \glook\apist\Apist::filter('h1'),
+        ]);
+
+        $this->assertEquals('Hello', $result['heading']);
+    }
+
+    /** @test */
+    public function overridden_before_parse_transforms_content_before_parsing()
+    {
+        $api = new class extends \glook\apist\Apist {
+            protected ?string $baseUrl = 'http://example.com';
+
+            public function beforeParse(string $content): string
+            {
+                return str_replace('World', 'Replaced', $content);
+            }
+
+            public function parseContent(string $content, $blueprint)
+            {
+                return $this->parse($content, $blueprint);
+            }
+        };
+
+        $html = '<html><body><h1>World</h1></body></html>';
+        $result = $api->parseContent($html, [
+            'heading' => \glook\apist\Apist::filter('h1'),
+        ]);
+
+        $this->assertEquals('Replaced', $result['heading']);
+    }
+
+    /** @test */
+    public function before_parse_is_called_during_http_request()
+    {
+        $api = new class extends \glook\apist\Apist {
+            protected ?string $baseUrl = 'http://example.com';
+            public bool $beforeParseCalled = false;
+
+            public function beforeParse(string $content): string
+            {
+                $this->beforeParseCalled = true;
+                return $content;
+            }
+
+            public function fetchIndex()
+            {
+                return $this->get('/');
+            }
+        };
+
+        $mock = new MockHandler([
+            new Response(200, [], '<html><body></body></html>'),
+        ]);
+        $api->setGuzzle(new Client(['handler' => HandlerStack::create($mock)]));
+
+        $api->fetchIndex();
+
+        $this->assertTrue($api->beforeParseCalled);
+    }
 }

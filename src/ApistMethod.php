@@ -49,7 +49,7 @@ class ApistMethod
      * @param string|null $url
      * @param array|ApistSelector|null $schemaBlueprint
      */
-    public function __construct($resource, $url, $schemaBlueprint)
+    public function __construct(Apist $resource, ?string $url, $schemaBlueprint)
     {
         $this->resource = $resource;
         $this->url = $url;
@@ -192,6 +192,8 @@ class ApistMethod
      */
     public function setContent(string $content): self
     {
+        $content = $this->resource->beforeParse($content);
+
         $this->content = $content;
         $this->crawler->addContent($content);
 
