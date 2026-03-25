@@ -11,7 +11,7 @@ abstract class Apist
     /**
      * @var string|null
      */
-    protected ?string $baseUri = null;
+    protected ?string $baseUrl = null;
 
     protected Client $guzzle;
 
@@ -35,7 +35,7 @@ abstract class Apist
      */
     public function __construct(array $options = [])
     {
-        $options['base_uri'] = $this->getBaseUri();
+        $options['base_uri'] = $this->getBaseUrl();
         $this->guzzle = new Client($options);
     }
 
@@ -98,36 +98,17 @@ abstract class Apist
     /**
      * @return string|null
      */
-    public function getBaseUri(): ?string
-    {
-        return $this->baseUri;
-    }
-
-    /**
-     * fallback method for backward compatibility
-     * @return string|null
-     */
     public function getBaseUrl(): ?string
     {
-        return $this->getBaseUri();
+        return $this->baseUrl;
     }
 
     /**
      * @param string $baseUri
      */
-    public function setBaseUri(string $baseUri): void
+    public function setBaseUrl(string $baseUri): void
     {
-        $this->baseUri = $baseUri;
-    }
-
-    /**
-     * fallback method for backward compatibility
-     * @param string $baseUrl
-     * @return void
-     */
-    public function setBaseUrl(string $baseUrl): void
-    {
-        $this->setBaseUri($baseUrl);
+        $this->baseUrl = $baseUri;
     }
 
     /**

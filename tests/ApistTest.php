@@ -41,14 +41,14 @@ class ApistTest extends TestCase
     /** @test */
     public function it_returns_base_uri()
     {
-        $this->assertEquals('http://example.com', $this->resource->getBaseUri());
+        $this->assertEquals('http://example.com', $this->resource->getBaseUrl());
     }
 
     /** @test */
     public function it_sets_and_gets_base_uri()
     {
-        $this->resource->setBaseUri('http://new.example.com');
-        $this->assertEquals('http://new.example.com', $this->resource->getBaseUri());
+        $this->resource->setBaseUrl('http://new.example.com');
+        $this->assertEquals('http://new.example.com', $this->resource->getBaseUrl());
     }
 
     /** @test */

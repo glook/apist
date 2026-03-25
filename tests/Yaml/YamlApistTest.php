@@ -34,7 +34,7 @@ class YamlApistTest extends TestCase
         $yaml = "baseUri: http://example.com\nmyMethod:\n  url: /page\n  blueprint:\n    title: .title | text\n";
         $api = new YamlApist($yaml);
         $this->assertInstanceOf(Apist::class, $api);
-        $this->assertEquals('http://example.com', $api->getBaseUri());
+        $this->assertEquals('http://example.com', $api->getBaseUrl());
     }
 
     /** @test */

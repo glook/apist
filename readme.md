@@ -30,9 +30,9 @@ use glook\apist\Apist;
 class WikiApi extends Apist
 {
 
-	public function getBaseUri()
+	public function getBaseUrl()
 	{
-		return 'http://en.wikipedia.org';
+		return 'https://en.wikipedia.org';
 	}
 
 	public function index()
@@ -51,7 +51,7 @@ class WikiApi extends Apist
 				'lang'  => Apist::current()->attr('title'),
 				'link'  => Apist::current()->attr('href')->call(function ($href)
 				{
-					return 'http:' . $href;
+					return 'https:' . $href;
 				})
 			]),
 			'sister_projects'  => Apist::filter('#mp-sister b a')->each()->text(),
@@ -68,11 +68,11 @@ Result:
   "welcome_message": "Welcome to Wikipedia",
   "portals": [
     {
-      "link": "http:\/\/en.wikipedia.org\/wiki\/Portal:Arts",
+      "link": "https:\/\/en.wikipedia.org\/wiki\/Portal:Arts",
       "label": "Arts"
     },
     {
-      "link": "http:\/\/en.wikipedia.org\/wiki\/Portal:Biography",
+      "link": "https:\/\/en.wikipedia.org\/wiki\/Portal:Biography",
       "label": "Biography"
     }
   ],
@@ -80,7 +80,7 @@ Result:
     {
       "label": "Simple English",
       "lang": "Simple English",
-      "link": "http:\/\/simple.wikipedia.org\/wiki\/"
+      "link": "https:\/\/simple.wikipedia.org\/wiki\/"
     }
   ],
   "sister_projects": [
@@ -190,7 +190,7 @@ $result = $api->myMethod();
 YAML format:
 
 ```yaml
-baseUri: http://example.com
+baseUri: https://example.com
 
 _post:
   title: .post-title | text

@@ -40,10 +40,10 @@ class Parser
         $data = Yaml::parse($this->file);
 
         if (isset($data['baseUri'])) {
-            $resource->setBaseUri($data['baseUri']);
+            $resource->setBaseUrl($data['baseUri']);
             unset($data['baseUri']);
         } elseif (isset($data['baseUrl'])) {
-            $resource->setBaseUri($data['baseUrl']);
+            $resource->setBaseUrl($data['baseUrl']);
             unset($data['baseUrl']);
         }
         foreach ($data as $method => $methodConfig) {

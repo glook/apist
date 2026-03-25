@@ -29,7 +29,7 @@ class ParserTest extends TestCase
 
         $parser->load($resource);
 
-        $this->assertEquals('http://example.com', $resource->getBaseUri());
+        $this->assertEquals('http://example.com', $resource->getBaseUrl());
     }
 
     /** @test */
@@ -41,7 +41,7 @@ class ParserTest extends TestCase
 
         $parser->load($resource);
 
-        $this->assertEquals('http://legacy.example.com', $resource->getBaseUri());
+        $this->assertEquals('http://legacy.example.com', $resource->getBaseUrl());
     }
 
     /** @test */
