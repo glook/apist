@@ -1,5 +1,6 @@
-<?php namespace glook\apist;
+<?php
 
+namespace glook\apist;
 
 use glook\apist\Selectors\ApistSelector;
 use GuzzleHttp\Cookie\CookieJar;
@@ -13,26 +14,32 @@ class ApistMethod
      * @var Apist
      */
     protected $resource;
+
     /**
      * @var string
      */
     protected $url;
+
     /**
      * @var ApistSelector[]|ApistSelector
      */
     protected $schemaBlueprint;
+
     /**
      * @var string
      */
     protected $method = 'GET';
+
     /**
      * @var string
      */
     protected $content;
+
     /**
      * @var Crawler
      */
     protected $crawler;
+
     /**
      * @var ResponseInterface
      */
@@ -43,7 +50,7 @@ class ApistMethod
      * @param $url
      * @param $schemaBlueprint
      */
-    function __construct($resource, $url, $schemaBlueprint)
+    public function __construct($resource, $url, $schemaBlueprint)
     {
         $this->resource = $resource;
         $this->url = $url;
@@ -63,15 +70,18 @@ class ApistMethod
             $this->makeRequest($arguments);
         } catch (ConnectException $e) {
             $url = (string) $e->getRequest()->getUri();
+
             return $this->errorResponse($e->getCode(), $e->getMessage(), $url);
         } catch (RequestException $e) {
             $url = (string) $e->getRequest()->getUri();
             $status = $e->getCode();
             $response = $e->getResponse();
             $reason = $e->getMessage();
+
             if (!is_null($response)) {
                 $reason = $response->getReasonPhrase();
             }
+
             return $this->errorResponse($status, $reason, $url);
         }
 
@@ -91,7 +101,7 @@ class ApistMethod
 
         $response = $client->request($this->getMethod(), $this->url, $arguments);
         $this->setResponse($response);
-        $this->setContent((string)$response->getBody());
+        $this->setContent((string) $response->getBody());
     }
 
     /**
@@ -104,6 +114,7 @@ class ApistMethod
         if (is_null($blueprint)) {
             return $this->content;
         }
+
         if (!is_array($blueprint)) {
             $blueprint = $this->parseBlueprintValue($blueprint, $node);
         } else {
@@ -111,6 +122,7 @@ class ApistMethod
                 $value = $this->parseBlueprintValue($value, $node);
             });
         }
+
         return $blueprint;
     }
 
@@ -124,6 +136,7 @@ class ApistMethod
         if ($value instanceof ApistSelector) {
             return $value->getValue($this, $node);
         }
+
         return $value;
     }
 
@@ -142,7 +155,7 @@ class ApistMethod
             'error' => [
                 'status' => $status,
                 'reason' => $reason,
-            ]
+            ],
         ];
     }
 
@@ -169,6 +182,7 @@ class ApistMethod
     public function setMethod(string $method): self
     {
         $this->method = $method;
+
         return $this;
     }
 
@@ -180,6 +194,7 @@ class ApistMethod
     {
         $this->content = $content;
         $this->crawler->addContent($content);
+
         return $this;
     }
 
@@ -189,7 +204,7 @@ class ApistMethod
     protected function getDefaultOptions(): array
     {
         return [
-            'cookies' => new CookieJar
+            'cookies' => new CookieJar(),
         ];
     }
 
@@ -216,5 +231,4 @@ class ApistMethod
     {
         $this->response = $response;
     }
-
 }

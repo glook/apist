@@ -8,7 +8,6 @@ class TestApi extends Apist
 {
     protected $baseUri = 'http://example.com';
 
-
     public function index()
     {
         return $this->get('/', [
@@ -16,7 +15,7 @@ class TestApi extends Apist
             'copyright' => Apist::filter('.copyright .about a')->first()->attr('href'),
             'posts' => Apist::filter('.posts .post')->each(function () {
                 return [
-                    'title' => Apist::filter('h1.title a')->text()
+                    'title' => Apist::filter('h1.title a')->text(),
                 ];
             }),
         ]);
@@ -25,7 +24,7 @@ class TestApi extends Apist
     public function element_not_found()
     {
         return $this->get('/', [
-            'title' => Apist::filter('.page_header')
+            'title' => Apist::filter('.page_header'),
         ]);
     }
 
@@ -33,7 +32,6 @@ class TestApi extends Apist
     {
         return $this->get('/', Apist::filter('.page_head .title'));
     }
-
 
     public function plain_return()
     {
@@ -54,5 +52,4 @@ class TestApi extends Apist
     {
         return $node->text() . '_custom';
     }
-
 }

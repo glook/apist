@@ -8,8 +8,8 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-
 
 class ApistTest extends TestCase
 {
@@ -21,13 +21,14 @@ class ApistTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->resource = new TestApi;
+        $this->resource = new TestApi();
     }
 
     protected function mockClient(array $queue): Client
     {
         $mock = new MockHandler($queue);
         $handler = HandlerStack::create($mock);
+
         return new Client(['handler' => $handler]);
     }
 
@@ -81,7 +82,7 @@ class ApistTest extends TestCase
         ]));
         $this->resource->setSuppressExceptions(false);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->resource->element_not_found();
     }
 

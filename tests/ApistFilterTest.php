@@ -6,11 +6,12 @@ use glook\apist\Apist;
 use glook\apist\ApistMethod;
 use glook\apist\Crawler;
 use glook\apist\Selectors\ApistFilter;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 class ApistFilterTest extends TestCase
 {
-    const TEST_HTML = '<html><body>
+    public const TEST_HTML = '<html><body>
 <ul class="list">
   <li class="item" data-id="1">  Alpha  </li>
   <li class="item" data-id="2">Beta</li>
@@ -24,6 +25,7 @@ class ApistFilterTest extends TestCase
 </body></html>';
 
     protected $resource;
+
     protected $apistMethod;
 
     protected function setUp(): void
@@ -37,6 +39,7 @@ class ApistFilterTest extends TestCase
     protected function makeFilter(string $selector): ApistFilter
     {
         $node = $this->apistMethod->getCrawler()->filter($selector);
+
         return new ApistFilter($node, $this->apistMethod);
     }
 
@@ -310,7 +313,7 @@ class ApistFilterTest extends TestCase
     public function it_throws_when_guard_crawler_called_with_non_crawler()
     {
         $filter = new ApistFilter('just a string', $this->apistMethod);
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $filter->text();
     }
 

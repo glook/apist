@@ -25,6 +25,7 @@ class ApistMethodErrorTest extends TestCase
     {
         $mock = new MockHandler($queue);
         $handler = HandlerStack::create($mock);
+
         return new Client(['handler' => $handler]);
     }
 

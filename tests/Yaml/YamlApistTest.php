@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 class YamlApistTest extends TestCase
@@ -16,6 +17,7 @@ class YamlApistTest extends TestCase
     {
         $mock = new MockHandler($queue);
         $handler = HandlerStack::create($mock);
+
         return new Client(['handler' => $handler]);
     }
 
@@ -39,7 +41,7 @@ class YamlApistTest extends TestCase
     public function it_throws_for_undefined_method_when_no_parser()
     {
         $api = new YamlApist(null);
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $api->someUndefinedMethod();
     }
 
