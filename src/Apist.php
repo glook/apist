@@ -1,4 +1,6 @@
-<?php namespace glook\apist;
+<?php
+
+namespace glook\apist;
 
 use glook\apist\Selectors\ApistFilter;
 use glook\apist\Selectors\ApistSelector;
@@ -11,18 +13,22 @@ abstract class Apist
      * @var string
      */
     protected $baseUri;
+
     /**
      * @var Client
      */
     protected $guzzle;
+
     /**
      * @var ApistMethod
      */
     protected $currentMethod;
+
     /**
      * @var ApistMethod
      */
     protected $lastMethod;
+
     /**
      * @var bool
      */
@@ -31,7 +37,7 @@ abstract class Apist
     /**
      * @param array $options
      */
-    function __construct($options = [])
+    public function __construct($options = [])
     {
         $options['base_uri'] = $this->getBaseUri();
         $this->guzzle = new Client($options);
@@ -137,7 +143,7 @@ abstract class Apist
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isSuppressExceptions(): bool
     {
@@ -145,7 +151,7 @@ abstract class Apist
     }
 
     /**
-     * @param boolean $suppressExceptions
+     * @param bool $suppressExceptions
      */
     public function setSuppressExceptions(bool $suppressExceptions): void
     {
@@ -182,6 +188,7 @@ abstract class Apist
         $this->currentMethod->setContent($content);
         $result = $this->currentMethod->parseBlueprint($blueprint);
         $this->currentMethod = null;
+
         return $result;
     }
 
@@ -250,5 +257,4 @@ abstract class Apist
     {
         return $this->request('DELETE', $url, $blueprint, $options);
     }
-
 }

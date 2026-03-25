@@ -5,6 +5,7 @@ namespace glook\apist\tests\Yaml;
 use glook\apist\Selectors\ApistSelector;
 use glook\apist\tests\TestApi;
 use glook\apist\Yaml\Parser;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
@@ -64,7 +65,7 @@ class ParserTest extends TestCase
         $resource = $this->makeResource();
         $parser->load($resource);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $parser->getMethod('nonExistentMethod');
     }
 
@@ -127,7 +128,7 @@ class ParserTest extends TestCase
         $parser = $this->makeParser($yaml);
         $resource = $this->makeResource();
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $parser->load($resource);
     }
 

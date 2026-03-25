@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class CrawlerTest extends TestCase
 {
-    const TEST_HTML = '<html><body>
+    public const TEST_HTML = '<html><body>
 <ul class="list">
   <li class="item" data-id="1">Alpha</li>
   <li class="item" data-id="2">Beta</li>
@@ -22,6 +22,7 @@ class CrawlerTest extends TestCase
     {
         $crawler = new Crawler();
         $crawler->addContent(self::TEST_HTML);
+
         return $crawler;
     }
 

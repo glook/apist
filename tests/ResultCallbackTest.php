@@ -5,15 +5,17 @@ namespace glook\apist\tests;
 use glook\apist\ApistMethod;
 use glook\apist\Crawler;
 use glook\apist\Selectors\ResultCallback;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 class ResultCallbackTest extends TestCase
 {
-    const TEST_HTML = '<html><body>
+    public const TEST_HTML = '<html><body>
 <p class="hello">World</p>
 </body></html>';
 
     protected $resource;
+
     protected $apistMethod;
 
     protected function setUp(): void
@@ -94,7 +96,7 @@ class ResultCallbackTest extends TestCase
     {
         $cb = new ResultCallback('nonExistentMethod12345', []);
         $node = $this->makeNode('.hello');
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $cb->apply($node, $this->apistMethod);
     }
 

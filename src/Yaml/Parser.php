@@ -1,178 +1,181 @@
-<?php namespace glook\apist\Yaml;
+<?php
+
+namespace glook\apist\Yaml;
 
 use glook\apist\Apist;
 use glook\apist\Selectors\ApistSelector;
+use InvalidArgumentException;
 use Symfony\Component\Yaml\Yaml;
 
 class Parser
 {
-	/**
-	 * @var array
-	 */
-	protected $methods = [];
-	/**
-	 * @var array
-	 */
-	protected $structures = [];
-	/**
-	 * @var string
-	 */
-	protected $file;
+    /**
+     * @var array
+     */
+    protected $methods = [];
 
-	/**
-	 * @param $file
-	 */
-	function __construct($file)
-	{
-		$this->file = $file;
-	}
+    /**
+     * @var array
+     */
+    protected $structures = [];
 
-	/**
-	 * @param Apist $resource
-	 */
-	public function load(Apist $resource)
-	{
-		$data = Yaml::parse($this->file);
-		if (isset($data['baseUri']))
-		{
-			$resource->setBaseUri($data['baseUri']);
-			unset($data['baseUri']);
-		} elseif (isset($data['baseUrl']))
-		{
-			$resource->setBaseUri($data['baseUrl']);
-			unset($data['baseUrl']);
-		}
-		foreach ($data as $method => $methodConfig)
-		{
-			if ($method[0] === '_')
-			{
-				# structure
-				$this->structures[$method] = $methodConfig;
-			} else
-			{
-				# method
-				if ( ! isset($methodConfig['blueprint']))
-				{
-					$methodConfig['blueprint'] = null;
-				}
-				if ( ! is_null($methodConfig['blueprint']))
-				{
-					$methodConfig['blueprint'] = $this->parseBlueprint($methodConfig['blueprint']);
-				}
-				$this->methods[$method] = $methodConfig;
-			}
-		}
-	}
+    /**
+     * @var string
+     */
+    protected $file;
 
-	/**
-	 * @param $blueprint
-	 * @return mixed
-	 */
-	protected function parseBlueprint($blueprint)
-	{
-		$callback = function (&$value)
-		{
-			if (is_string($value))
-			{
-				$value = str_replace(':current', '*', $value);
-			}
-			if ($value[0] === ':')
-			{
-				# structure
-				$structure = $this->getStructure($value);
-				$value = $this->parseBlueprint($structure);
-				return;
-			}
-			if (strpos($value, '|') === false) return;
+    /**
+     * @param $file
+     */
+    public function __construct($file)
+    {
+        $this->file = $file;
+    }
 
-			$parts = preg_split('/\s?\|\s?/', $value);
-			$selector = array_shift($parts);
-			$value = Apist::filter($selector);
-			foreach ($parts as $part)
-			{
-				$this->addCallbackToFilter($value, $part);
-			}
-		};
-		if ( ! is_array($blueprint))
-		{
-			$callback($blueprint);
-		} else
-		{
-			array_walk_recursive($blueprint, $callback);
-		}
-		return $blueprint;
-	}
+    /**
+     * @param Apist $resource
+     */
+    public function load(Apist $resource)
+    {
+        $data = Yaml::parse($this->file);
 
-	/**
-	 * @param ApistSelector $filter
-	 * @param $callback
-	 */
-	protected function addCallbackToFilter(ApistSelector $filter, $callback)
-	{
-		$method = strtok($callback, '(),');
-		$arguments = [];
-		while (($argument = strtok('(),')) !== false)
-		{
-			$argument = trim($argument);
-			if (preg_match('/^[\'"].*[\'"]$/', $argument))
-			{
-				$argument = substr($argument, 1, -1);
-			}
-			if ($argument[0] === ':')
-			{
-				# structure
-				$structure = $this->getStructure($argument);
-				$argument = $this->parseBlueprint($structure);
-			}
-			$arguments[] = $argument;
-		}
-		$filter->addCallback($method, $arguments);
-	}
+        if (isset($data['baseUri'])) {
+            $resource->setBaseUri($data['baseUri']);
+            unset($data['baseUri']);
+        } elseif (isset($data['baseUrl'])) {
+            $resource->setBaseUri($data['baseUrl']);
+            unset($data['baseUrl']);
+        }
+        foreach ($data as $method => $methodConfig) {
+            if ($method[0] === '_') {
+                // structure
+                $this->structures[$method] = $methodConfig;
+            } else {
+                // method
+                if (!isset($methodConfig['blueprint'])) {
+                    $methodConfig['blueprint'] = null;
+                }
 
-	/**
-	 * @param $name
-	 * @return mixed
-	 */
-	protected function getStructure($name)
-	{
-		$structure = '_' . substr($name, 1);
-		if ( ! isset($this->structures[$structure]))
-		{
-			throw new \InvalidArgumentException("Structure '$structure' not found.'");
-		}
-		return $this->structures[$structure];
-	}
+                if (!is_null($methodConfig['blueprint'])) {
+                    $methodConfig['blueprint'] = $this->parseBlueprint($methodConfig['blueprint']);
+                }
+                $this->methods[$method] = $methodConfig;
+            }
+        }
+    }
 
-	/**
-	 * @param $name
-	 * @return array
-	 */
-	public function getMethod($name)
-	{
-		if ( ! isset($this->methods[$name]))
-		{
-			throw new \InvalidArgumentException("Method '$name' not found.'");
-		}
-		$methodConfig = $this->methods[$name];
-		return $methodConfig;
-	}
+    /**
+     * @param $blueprint
+     * @return mixed
+     */
+    protected function parseBlueprint($blueprint)
+    {
+        $callback = function (&$value) {
+            if (is_string($value)) {
+                $value = str_replace(':current', '*', $value);
+            }
 
-	/**
-	 * @param $method
-	 * @param $arguments
-	 * @return mixed
-	 */
-	public function insertMethodArguments($method, $arguments)
-	{
-		array_walk_recursive($method, function (&$value) use ($arguments)
-		{
-			if ( ! is_string($value)) return;
-			$value = preg_replace_callback('/\$(?<num>[0-9]+)/', function ($finded) use ($arguments)
-			{
-				$argumentPosition = intval($finded['num']) - 1;
-				return isset($arguments[$argumentPosition]) ? $arguments[$argumentPosition] : null;
-			}, $value);
-		});
-		return $method;
-	}
+            if ($value[0] === ':') {
+                // structure
+                $structure = $this->getStructure($value);
+                $value = $this->parseBlueprint($structure);
+
+                return;
+            }
+
+            if (strpos($value, '|') === false) {
+                return;
+            }
+
+            $parts = preg_split('/\s?\|\s?/', $value);
+            $selector = array_shift($parts);
+            $value = Apist::filter($selector);
+            foreach ($parts as $part) {
+                $this->addCallbackToFilter($value, $part);
+            }
+        };
+
+        if (!is_array($blueprint)) {
+            $callback($blueprint);
+        } else {
+            array_walk_recursive($blueprint, $callback);
+        }
+
+        return $blueprint;
+    }
+
+    /**
+     * @param ApistSelector $filter
+     * @param $callback
+     */
+    protected function addCallbackToFilter(ApistSelector $filter, $callback)
+    {
+        $method = strtok($callback, '(),');
+        $arguments = [];
+        while (($argument = strtok('(),')) !== false) {
+            $argument = trim($argument);
+
+            if (preg_match('/^[\'"].*[\'"]$/', $argument)) {
+                $argument = substr($argument, 1, -1);
+            }
+
+            if ($argument[0] === ':') {
+                // structure
+                $structure = $this->getStructure($argument);
+                $argument = $this->parseBlueprint($structure);
+            }
+            $arguments[] = $argument;
+        }
+        $filter->addCallback($method, $arguments);
+    }
+
+    /**
+     * @param $name
+     * @return mixed
+     */
+    protected function getStructure($name)
+    {
+        $structure = '_' . substr($name, 1);
+
+        if (!isset($this->structures[$structure])) {
+            throw new InvalidArgumentException("Structure '$structure' not found.'");
+        }
+
+        return $this->structures[$structure];
+    }
+
+    /**
+     * @param $name
+     * @return array
+     */
+    public function getMethod($name)
+    {
+        if (!isset($this->methods[$name])) {
+            throw new InvalidArgumentException("Method '$name' not found.'");
+        }
+        $methodConfig = $this->methods[$name];
+
+        return $methodConfig;
+    }
+
+    /**
+     * @param $method
+     * @param $arguments
+     * @return mixed
+     */
+    public function insertMethodArguments($method, $arguments)
+    {
+        array_walk_recursive($method, function (&$value) use ($arguments) {
+            if (!is_string($value)) {
+                return;
+            }
+            $value = preg_replace_callback('/\$(?<num>[0-9]+)/', function ($finded) use ($arguments) {
+                $argumentPosition = intval($finded['num']) - 1;
+
+                return $arguments[$argumentPosition] ?? null;
+            }, $value);
+        });
+
+        return $method;
+    }
 }

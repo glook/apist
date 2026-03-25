@@ -18,7 +18,7 @@ class ApistMethodTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->resource = new TestApi;
+        $this->resource = new TestApi();
 
         $mock = new MockHandler([
             new Response(200, ['X-Foo' => 'Bar'], file_get_contents(__DIR__ . '/stub/index.html')),
@@ -94,5 +94,4 @@ class ApistMethodTest extends TestCase
 
         $this->assertStringContainsString('Raw', $result);
     }
-
 }
