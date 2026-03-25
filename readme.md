@@ -176,44 +176,6 @@ Transformation:
 
 Any global PHP function can also be used in the chain (e.g., `strtoupper`, `strip_tags`).
 
-### YAML API
-
-You can define your API using YAML instead of PHP classes:
-
-```php
-use glook\apist\Apist;
-
-$api = Apist::fromYaml($yamlContent);
-$result = $api->myMethod();
-```
-
-YAML format:
-
-```yaml
-baseUri: https://example.com
-
-_post:
-  title: .post-title | text
-  date: .post-date | text | trim
-
-listPosts:
-  url: /posts
-  blueprint:
-    posts: .post | each | :post
-
-getPost:
-  url: /posts/$1
-  method: get
-  blueprint:
-    post: :post
-```
-
-- `baseUri` — base URL for all requests
-- Keys starting with `_` define reusable structures
-- `$1`, `$2` — positional arguments passed to the method
-- `:structureName` — reference to a defined structure
-- Pipe syntax: `selector | method1 | method2`
-
 ### Error handling
 
 By default, HTTP errors are suppressed and returned as structured error responses:
