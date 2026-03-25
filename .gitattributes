@@ -1,0 +1,4 @@
+tests/stub/** linguist-vendored=true
+tests export-ignore
+Dockerfile export-ignore
+phpunit.xml export-ignore
