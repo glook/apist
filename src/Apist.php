@@ -3,7 +3,6 @@
 namespace glook\apist;
 
 use glook\apist\Selectors\ApistSelector;
-use glook\apist\Yaml\YamlApist;
 use GuzzleHttp\Client;
 
 abstract class Apist
@@ -80,17 +79,6 @@ abstract class Apist
     public static function current()
     {
         return static::filter('*');
-    }
-
-    /**
-     * Initialize api from yaml configuration file
-     *
-     * @param string $file
-     * @return YamlApist
-     */
-    public static function fromYaml(string $file): YamlApist
-    {
-        return new YamlApist($file, []);
     }
 
     /**
