@@ -30,7 +30,7 @@ use glook\apist\Apist;
 class WikiApi extends Apist
 {
 
-	public function getBaseUrl()
+	public function getBaseUrl(): ?string
 	{
 		return 'https://en.wikipedia.org';
 	}
